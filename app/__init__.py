@@ -6,10 +6,7 @@ def create_app(config_name) -> Flask:
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     db.init_app(app=app)
-    # from app.api_1_0.models.ItemModel import ItemModel
-    # from app.api_1_0.models.ClassifyModel import CateModel
-    # with app.test_request_context():
-    #     db.create_all()
+    # create_tables(app)
     register(app=app)
     return app
 
@@ -19,3 +16,11 @@ def register(app):
 
     from app.api_test import api as api_test
     app.register_blueprint(api_test, url_prefix='api/test')
+
+
+def create_tables(app):
+    from app.api_1_0.models.ItemModel import ItemModel
+    from app.api_1_0.models.ClassifyModel import CateModel, BrandModel
+    from app.api_1_0.models.PropertyModel import ItemCommonAttributeKeyModel, ItemCommonAttributeValueModel
+    with app.test_request_context():
+        db.create_all()

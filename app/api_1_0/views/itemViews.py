@@ -14,6 +14,7 @@ def get_item_info(item_id):
     try:
         item = db.session.query(ItemModel).filter_by(item_id=item_id).one()
         body = item.simpleInfo or dict()
+
         return responseSuccessHandler(body=body)
     except NoResultFound:
         return CommonError.getError(errorCode=1201)

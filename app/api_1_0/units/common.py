@@ -73,7 +73,8 @@ def responseSuccessHandler(statusCode=200, body=None):
         raise ValueError("Unknown body")
     return body, statusCode
 
-def responseErrorHandler(errorCode=0, msg=None, httpCode=0, request=""):
+def responseErrorHandler(errorCode=0, msg=None, httpCode=0):
+
     """
     200 OK - [GET]：服务器成功返回用户请求的数据，该操作是幂等的（Idempotent）。
     201 CREATED - [POST/PUT/PATCH]：用户新建或修改数据成功。
@@ -90,11 +91,14 @@ def responseErrorHandler(errorCode=0, msg=None, httpCode=0, request=""):
 
     :return: 返回一个响应
     """
+    from flask import request as r
     errorCodes = [400, 401, 402, 403, 404, 406, 410, 500]
     if msg is None:
         raise ValueError("error Msg can't be None")
     if msg and httpCode not in errorCodes:
         raise ValueError("error and successCode can't both exists")
-    return jsonify(__error_handler(msg=msg, code=errorCode, request=request)), httpCode
+    return jsonify(__error_handler(msg=msg,
+                                   code=errorCode,
+                                   request="{0} {1}".format(r.method, r.path))), httpCode
 
 
