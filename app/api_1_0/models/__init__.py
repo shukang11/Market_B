@@ -1,8 +1,3 @@
 class BaseModel(object):
+    pass
 
-    @property
-    def simpleInfo(self):
-        return {}
-
-    def getAllInfo(self):
-        return {}

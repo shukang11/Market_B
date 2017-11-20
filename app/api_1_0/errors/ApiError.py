@@ -1,4 +1,4 @@
-from app.api_1_0.units.common import responseErrorHandler
+from ..units.common import responseErrorHandler
 
 class ApiError(object):
 
@@ -82,6 +82,7 @@ class CateBluePrintError(CommonError):
             # 分类已存在，重复插入了
             3000: responseErrorHandler(errorCode=3000, msg="cate_already_exists", httpCode=400),
             3001: responseErrorHandler(errorCode=3001, msg="super_cate_id_cant_none_when_is_parent_is_no", httpCode=400),
+            3002: responseErrorHandler(errorCode=3002, msg="cate_ids_must_be_list", httpCode=400),
         }
         return switcher.get(errorCode) or super(CateBluePrintError, self).getError(errorCode=errorCode,)
 

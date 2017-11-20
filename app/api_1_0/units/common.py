@@ -68,7 +68,7 @@ def responseSuccessHandler(statusCode=200, body=None):
     if statusCode not in successCodes:
         raise ValueError("statusCode is not in successCodes")
     try:
-       body = jsonify(body or dict({ 'status': 'success'}))
+       body = jsonify(body)
     except:
         raise ValueError("Unknown body")
     return body, statusCode
