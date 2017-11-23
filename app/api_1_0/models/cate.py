@@ -43,6 +43,10 @@ class Cate(db.Model, BaseModel):
 
     @classmethod
     def delete_cates(cls, cate_ids=list())->bool:
-        session.query(Cate).filter(Cate.cate_id.in_(cate_ids)).delete(synchronize_session=False)
+        # session.query(Cate).filter(Cate.cate_id.in_(cate_ids)).delete(synchronize_session='fetch')
+        tmp = session.query(Cate).filter(Cate.cate_id.in_(cate_ids)).all()
+        cates = list()
+        for cate in tmp:
+            cate.cate_is_delete = 1
         session.commit()
         return True

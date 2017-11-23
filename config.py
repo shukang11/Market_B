@@ -20,6 +20,7 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'mysql://root:123456@localhost/tree_appdev'
+    SERVICE_TOKEN_SUFFIX = 'im_token_suffix'
 
     @classmethod
     def init_app(app):

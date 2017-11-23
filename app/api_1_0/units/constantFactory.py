@@ -34,3 +34,13 @@ def get_random_num(digit=6):
         append = str(random.randint(1, 9))
         result = result + append
     return result
+
+def get_list_from_column(content):
+    if content is None:
+        return None
+    content = str(content)
+    while content.startswith(';'):
+        content = content[1: ]
+    while content.endswith(';'):
+        content = content[:-1]
+    return content.split(';')

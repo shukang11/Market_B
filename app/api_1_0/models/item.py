@@ -5,7 +5,7 @@ from ..models import BaseModel
 from ..units.constantFactory import getUnix_timeTuple
 
 """商品表"""
-class ItemModel(db.Model, BaseModel):
+class Item(db.Model, BaseModel):
     """商品信息表"""
     __tablename__ = "bao_item"
     item_id = Column(INTEGER, Sequence(increment=1, start=1, name="item_id_sep"), primary_key=True, autoincrement=True)  # id
@@ -41,4 +41,6 @@ class ItemModel(db.Model, BaseModel):
     item_level = Column(SMALLINT(1), nullable=False, default=1)  # 产品级别
     item_rate_num = Column(SMALLINT, nullable=False, default='0')  # 产品评分
     item_sale_num = Column(INTEGER, nullable=False, default=0)  # 产品销量
+    item_belong_shop_id = Column(INTEGER, nullable=False)# 商品属于的店家
     item_status = Column(SMALLINT(1), nullable=False, default=1)  # 状态(0 审核未通过 1 等待审核 2 审核通过)
+    item_is_delete = Column(SMALLINT(1), nullable=True, default=1)# 商品是否被删除

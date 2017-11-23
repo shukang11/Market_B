@@ -9,7 +9,7 @@ def create_app(config_name) -> Flask:
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     db.init_app(app=app)
-    # create_tables(app)
+    create_tables(app)
     register(app=app)
     app_dir = os.path.join(basedir, 'app')
     # for routes in os.listdir(app_dir):
@@ -30,8 +30,9 @@ def register(app):
     from app.api_test import api as api_test
     app.register_blueprint(api_test, url_prefix='api/test')
 
-
 def create_tables(app):
-
+    # 因为模型对应的是数据表，数据库就一份，所以model可以放在外面，不必放在模块中的,暂时还在实验中，所以继续
+    from app.api_1_0.models.user import User
+    from app.api_1_0.models.order import Cart, Order
     with app.test_request_context():
         db.create_all()

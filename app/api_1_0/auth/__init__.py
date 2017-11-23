@@ -1,8 +1,14 @@
 from flask import Blueprint
+
 api = Blueprint('api1_0', __name__)
 
 from ..views import cate
 from ..views import brand
+from ..views import item
+from ..views import user
+from ..views import attribute
+
+
 
 """
 GET（SELECT）：从服务器取出资源（一项或多项）。

@@ -40,7 +40,7 @@ def delete():
     if Cate.delete_cates(cate_ids=tmp):
         return responseSuccessHandler()
 
-@api.route("/cate", methods=['GET'])
+@api.route("/cate/root", methods=['GET'])
 def get_cates():
     result = session.query(Cate).filter_by(cate_supercate_id=0).all()
     body = list()
@@ -58,10 +58,9 @@ def get_cates():
         })
     return responseSuccessHandler(body=body)
 
-@api.route("/cate/<int:cate_id>", methods=['GET'])
-def get_all_cates(cate_id):
+@api.route("/cate/<int:cate_id>", methods=['GET', ])
+def get_a_cates(cate_id):
     t_cate:Cate = Cate.query.get_or_404(cate_id)
-    print(t_cate.cate_name or 'none')
     if cate_id is None:
         return CommonError.args_miss(msg='cate_id_required')
     try:
