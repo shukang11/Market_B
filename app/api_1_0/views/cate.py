@@ -1,9 +1,9 @@
 from flask import request
 from ..auth import api
-from ..models.cate import Cate
+from app.models import Cate
 from ..errors.ApiError import CommonError, CateBluePrintError
-from ..units.common import responseErrorHandler, responseSuccessHandler
-from app.units.ext import session
+from app.units.common import responseErrorHandler, responseSuccessHandler
+from app import db
 
 @api.route("/cate", methods=['POST', ])
 def insert_a_cate():
@@ -22,7 +22,7 @@ def insert_a_cate():
     except:
         return CommonError.getError(errorCode=999)
 
-@api.route("/cate", methods=['DELETE'])
+@api.route("/cate", methods=['DELETE', ])
 def delete():
     tmp = request.args.get('cate_ids')
     cate_ids = list(tmp)
@@ -40,9 +40,9 @@ def delete():
     if Cate.delete_cates(cate_ids=tmp):
         return responseSuccessHandler()
 
-@api.route("/cate/root", methods=['GET'])
+@api.route("/cate/root", methods=['GET', ])
 def get_cates():
-    result = session.query(Cate).filter_by(cate_supercate_id=0).all()
+    result = db.session.query(Cate).filter_by(cate_supercate_id=0).all()
     body = list()
     for r in result:
         body.append({
@@ -64,7 +64,7 @@ def get_a_cates(cate_id):
     if cate_id is None:
         return CommonError.args_miss(msg='cate_id_required')
     try:
-        r = Cate.get_a_cate(rcate_id=cate_id)
+        r = Cate.get_a_cate(cate_id=cate_id)
         if isinstance(r, Cate):
             body = dict({
             "cate_id": r.cate_id,
@@ -82,13 +82,46 @@ def get_a_cates(cate_id):
     except:
         return CommonError.getError(errorCode=999)
 
-@api.route("/cate/super", methods=['GET', ])
-def get_super_cate_info():
+@api.route("/cate/<int:cate_id>/children", methods=['GET', ])
+def get_children_cate_info(cate_id):
+    """
+    获得一个分类的子节点
+    :param cate_id: 节点的id
+    :return: might be None
+    """
+    if cate_id is None:
+        return  CommonError.args_miss(msg='cate_id_required')
+    cate: Cate = Cate.get_a_cate(cate_id=cate_id)
+    if cate is None:
+        return CommonError.getError(errorCode=1006)
+    cates = Cate.get_children_cate(cate_id) or list()
+    if len(cates) == 0:
+        return responseErrorHandler(errorCode=999)
+    bodys = list()
+    for cate in cates:
+        body = dict({
+            "cate_id": cate.cate_id,
+            "cate_supercate_id": cate.cate_supercate_id,
+            "cate_is_parent": cate.cate_is_parent,
+            "cate_name": cate.cate_name,
+            "cate_is_delete": cate.cate_is_delete,
+            "cate_common_props": cate.cate_common_props,
+            "cate_sort_num": cate.cate_sort_num,
+            "cate_create_time": cate.cate_create_time,
+            "cate_update_time": cate.cate_update_time,
+        })
+        bodys.append(body)
+    return responseSuccessHandler(body=bodys)
+
+
+
+
+@api.route("/cate/<int:cate_id>/super", methods=['GET', ])
+def get_super_cate_info(cate_id):
     """
     获得一个分类的父节点
     :return:
     """
-    cate_id = request.args.get('cate_id')
     if cate_id is None:
         return  CommonError.args_miss(msg='cate_id_required')
     cate: Cate = Cate.get_a_cate(cate_id=cate_id)

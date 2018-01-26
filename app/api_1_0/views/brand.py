@@ -1,15 +1,18 @@
-from flask import request
+from flask import request, g
 from ..auth import api
-from ..models.brand import Brand
-from ..errors.ApiError import CommonError, CateBluePrintError
-from ..units.common import responseErrorHandler, responseSuccessHandler
+from app.models import Brand
+from ..errors.ApiError import CommonError
+from app.units.common import responseSuccessHandler
 from ..errors.DAOError import NoResultFound
-from app.units.ext import session
+from app import db
 
-@api.route("/brand", methods=['GET'])
+
+@api.route("/brand", methods=['GET', ])
 def get_brands():
-    page = request.args.get('page', type=int)
-    brands = session.query(Brand).all()
+    sql = "select * from bao_brand"
+    if g.get("page") > 0:
+        sql += "LIMIT {0}, {1}".format(g.get('page'), g.get('page_limit'))
+    brands = db.session.execute(sql)
     body = list()
     for brand in brands:
         body.append({
@@ -24,7 +27,8 @@ def get_brands():
         })
     return responseSuccessHandler(body=body)
 
-@api.route("/brand", methods=['POST'])
+
+@api.route("/brand", methods=['POST', ])
 def insert_a_brand():
     brand_name = request.args.get("brand_name")
     brand_pic_url = request.args.get("brand_pic_url")
@@ -43,11 +47,12 @@ def insert_a_brand():
     brand.brand_pic_url = brand_pic_url
     brand.brand_cate_id = brand_cate_id
     brand.brand_note = brand_note
-    session.add(brand)
-    session.commit()
-    return responseSuccessHandler()
+    db.session.add(brand)
+    db.session.commit()
+    return responseSuccessHandler(body={'brand_id': brand.brand_id})
 
-@api.route("/brand/<int:brand_id>", methods=['PUT'])
+
+@api.route("/brand/<int:brand_id>", methods=['PUT', ])
 def update_brand_info(brand_id):
     if brand_id is None:
         return CommonError.args_miss(msg='brand_id_required')
@@ -56,7 +61,7 @@ def update_brand_info(brand_id):
     brand_cate_id = request.args.get("brand_cate_id")
     brand_note = request.args.get("brand_note")
     try:
-        brand = session.query(Brand).filter_by(brand_id=brand_id).one()
+        brand = db.session.query(Brand).filter_by(brand_id=brand_id).one()
         if brand_name:
             brand.brand_name = brand_name
         if brand_note:
@@ -65,7 +70,7 @@ def update_brand_info(brand_id):
             brand.brand_cate_id = brand_cate_id
         if brand_pic_url:
             brand.brand_pic_url = brand_pic_url
-        session.add(brand)
+        db.session.add(brand)
         body = dict({
             "brand_id": brand.brand_id,
             "brand_name": brand.brand_name,

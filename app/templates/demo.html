@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta data-react-helmet="true" name="apple-itunes-app" content="app-id=432274380, app-argument=zhihu://questions/29274803"/>
+    <!-- <meta name="apple-itunes-app" content="app-id=1096547075"> -->
+    <title>Title</title>
+</head>
+
+<style type="text/css">
+  .ss {width: 100%; height: 100px; background-color: #666666;display: block;text-align: center;}
+</style>
+<body>
+  <script type="text/javascript">
+  var log = console.log.bind(console);
+  var openApp = function(e) {
+    window.location.href = "pandashop://";
+    alert("new");
+    // var ifr = document.createElement('iframe');
+    // ifr.src = 'pandashop://';
+    // ifr.display = 'none';
+    // document.body.appendChild(ifr);
+    window.setTimeout(function(){
+      // document.body.removeChild(ifr);
+      window.location.href = "http://www.baidu.com";
+    }, 3000)
+  };
+</script>
+<button class="ss" id="openApp" onclick="openApp()">打开app</button>
+
+</body>
+</html>

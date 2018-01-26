@@ -28,7 +28,7 @@ def get_random_num(digit=6):
     """获得一个随机数"""
     if digit is None:
         digit = 1
-    digit = min(digit, 10)# 最大支持10位
+    digit = min(digit, 32)# 最大支持10位
     result = ""
     while len(result) < digit:
         append = str(random.randint(1, 9))

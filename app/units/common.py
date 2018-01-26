@@ -1,5 +1,5 @@
-from flask import jsonify
-
+from flask import jsonify, g, request
+import functools
 
 # define status here
 class R_ErrorResponseStatus():
@@ -63,18 +63,25 @@ R401_UNAUTHORIZED = {}
 R403_FORBIDDEN = {}
 R404_NOOT_FOUND = {}
 
-def responseSuccessHandler(statusCode=200, body=None):
+def responseSuccessHandler(statusCode=200, body=None, header=None):
     successCodes = [200, 201, 202, 204]
     if statusCode not in successCodes:
         raise ValueError("statusCode is not in successCodes")
     try:
        body = jsonify(body)
     except Exception as e:
-        print(e)
+        pass
         # raise ValueError("Unknown body")
-    return body, statusCode
+    if header is None:
+        header = {
+            # 'Access-Control-Allow-Headers': 'Content-Type,Authorization',
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': '*'
+        }
+    return body, statusCode, header
 
-def responseErrorHandler(errorCode=0, msg=None, httpCode=0):
+def responseErrorHandler(errorCode=0, msg=None, httpCode=0, header=None):
 
     """
     200 OK - [GET]：服务器成功返回用户请求的数据，该操作是幂等的（Idempotent）。
@@ -98,8 +105,15 @@ def responseErrorHandler(errorCode=0, msg=None, httpCode=0):
         raise ValueError("error Msg can't be None")
     if msg and httpCode not in errorCodes:
         raise ValueError("error and successCode can't both exists")
+    if header is None:
+        header = {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Method': '*'
+        }
     return jsonify(__error_handler(msg=msg,
                                    code=errorCode,
-                                   request="{0} {1}".format(r.method, r.path))), httpCode
+                                   request="{0} {1}".format(r.method, r.path))), httpCode, header
+
 
 

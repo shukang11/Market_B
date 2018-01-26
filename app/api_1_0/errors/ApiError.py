@@ -1,4 +1,4 @@
-from ..units.common import responseErrorHandler
+from app.units.common import responseErrorHandler
 
 class ApiError(object):
 
@@ -54,6 +54,7 @@ class CommonError(ApiError):
                                     msg=msg or "missing_args",
                                     httpCode=400)
 
+
 class userBluePrintError(CommonError):
     @classmethod
     def getError(self, errorCode):
@@ -86,21 +87,28 @@ class CateBluePrintError(CommonError):
         }
         return switcher.get(errorCode) or super(CateBluePrintError, self).getError(errorCode=errorCode,)
 
-    @classmethod
-    def args_miss(self, msg):
-        return super(CateBluePrintError, self).args_miss(msg=msg)
-
 class ItemBluePrintError(CommonError):
 
     @classmethod
     def getError(self, errorCode):
         switcher = {
-            # 分类已存在，重复插入了
+            # 商品已存在，重复插入了
             4000: responseErrorHandler(errorCode=4000, msg="item_already_exists", httpCode=400),
+            # 商品不存在
+            4001:responseErrorHandler(errorCode=4001, msg="item_not_exists", httpCode=400),
+            4002: responseErrorHandler(errorCode=4002, msg="item_deleted", httpCode=400),
+            4003: responseErrorHandler(errorCode=4003, msg="inventory_not_enough", httpCode=400),
 
         }
         return switcher.get(errorCode) or super(ItemBluePrintError, self).getError(errorCode=errorCode)
 
+class OrderBluePrintError(CommonError):
+
     @classmethod
-    def args_miss(self, msg):
-        return super(ItemBluePrintError, self).args_miss(msg=msg)
+    def getError(self, errorCode):
+        switcher = {
+            # 商品已存在，重复插入了
+            5000: responseErrorHandler(errorCode=5000, msg="sku_already_exists", httpCode=400),
+
+        }
+        return switcher.get(errorCode) or super(OrderBluePrintError, self).getError(errorCode=errorCode)
