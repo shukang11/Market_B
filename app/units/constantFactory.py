@@ -5,13 +5,15 @@ import random
 
 """常用量获得"""
 
-__all__ = ['getUnix_timeTuple', 'getMD5']
+__all__ = ['getUnix_timeTuple', 'getMD5',
+           'get_list_from_column', 'getDateFromTimeTuple',
+           'get_random_num']
 
 def getUnix_timeTuple(date=datetime.datetime.now()):
     """获得unix 时间戳"""
     return time.mktime(date.timetuple())
 
-def getDateFromTimeTuple(unix_time=0, formatter='%Y-%m-%d %H:%M:%S') -> time:
+def getDateFromTimeTuple(unix_time=getUnix_timeTuple(), formatter='%Y-%m-%d %H:%M:%S') -> time:
     """时间戳转换成时间"""
     t = int(unix_time)
     time_locol = time.localtime(t)

@@ -5,4 +5,4 @@ api = Blueprint('api_test', __name__)
 app.fetchRoute(api, "/api_test")
 
 
-from app.api_test import views
+from app.api_test.views import source_data

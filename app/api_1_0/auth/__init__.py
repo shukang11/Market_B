@@ -12,6 +12,7 @@ from ..views import order
 from ..views import app_index
 from ..views import activity
 from ..views import cart
+from ..views import payment
 
 app.fetchRoute(api, "/api/v1000")
 
